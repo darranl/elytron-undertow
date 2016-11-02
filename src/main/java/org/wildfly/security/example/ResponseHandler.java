@@ -21,6 +21,8 @@ package org.wildfly.security.example;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import org.wildfly.security.auth.server.SecurityDomain;
+
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
@@ -29,7 +31,13 @@ import io.undertow.server.HttpServerExchange;
  *
  * @author <a href="mailto:darran.lofthouse@jboss.com">Darran Lofthouse</a>
  */
-public class ResponseHandler implements HttpHandler {
+class ResponseHandler implements HttpHandler {
+
+    private final SecurityDomain securityDomain;
+
+    ResponseHandler(final SecurityDomain securityDomain) {
+        this.securityDomain = securityDomain;
+    }
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -39,6 +47,7 @@ public class ResponseHandler implements HttpHandler {
         printWriter.println("    <head><title>Programatic WildFly Elytron with Undertow.</title></head>");
         printWriter.println("    <body>");
         printWriter.println("        <h1>Programatic WildFly Elytron with Undertow.</h1>");
+        printWriter.println(String.format("<p>Current Identity = '%s'</p>", securityDomain.getCurrentSecurityIdentity().getPrincipal().getName()));
         printWriter.println("    </body>");
         printWriter.println("</html>");
         printWriter.close();
